@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "29753249458",
+    "project_id": "uocquiz-a27b4",
+    "storage_bucket": "uocquiz-a27b4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29753249458:android:e67ac13e375fda1c5a83ab",
+        "android_client_info": {
+          "package_name": "com.uoc.fragments1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA144-KBxN3Uo0z1S9WsCn7anVHCWXnYcY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
