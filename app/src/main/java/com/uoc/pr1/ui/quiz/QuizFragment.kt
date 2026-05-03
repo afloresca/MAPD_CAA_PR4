@@ -24,6 +24,7 @@ import com.uoc.pr1.R
 import com.uoc.pr1.data.DataSource
 import com.uoc.pr1.data.model.Item
 import com.uoc.pr1.data.model.Seminary
+import com.uoc.pr1.ui.list.SeminarsAdapter
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -205,8 +206,8 @@ class QuizFragment : Fragment() {
        // val bm: Bitmap =  BitmapFactory.decodeFile(item!!.image_path);
         // v2.setImageBitmap(bm)
 
-//BEGIN-CODE-UOC-3.4
-
+        //BEGIN-CODE-UOC-3.4
+        SeminarsAdapter.ItemViewHolder(v2,{}).bind(item!!)
 
 
 

@@ -56,8 +56,19 @@ class SeminarsAdapter(private val onClick: (Seminary) -> Unit) :
 
             itemTextView!!.text = item.name
             //BEGIN-CODE-UOC-3.3
-
-
+            Glide.with(context)
+                .asBitmap()
+                .load(item.image_path)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap,
+                                                 transition: Transition<in Bitmap>?) {
+                    // Handle the bitmap (e.g., set it to an ImageView)
+                        itemImageView!!.setImageBitmap(resource)
+                    }
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    // Remove references to the Bitmap, if necessary
+                    }
+                })
             //END-CODE-UOC-3.3
 
         }

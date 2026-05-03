@@ -92,12 +92,26 @@ class DataSourceFirebase :  DataSource {
     fun readSeminarsUserIdsAsync(listener:ListenerData){
 
         val result = mutableListOf<Long>()
-
         //BEGIN-CODE-UOC-3.1
-
-
-
-
+        val db = FirebaseFirestore.getInstance()
+        db.collection("user_seminary")
+            .whereEqualTo("user_id", _user_id)
+            .get(Source.SERVER)
+            .addOnSuccessListener { querySnapshot ->
+                result.clear()
+                if(!querySnapshot.isEmpty()){
+                    for(doc in querySnapshot.documents){
+                        val seminar_id = doc.data?.get("sem_id") as Long
+                        result.add(seminar_id)
+                    }
+                }
+                listener.onSeminarsUserIds(result)
+            }
+            .addOnFailureListener { exception ->
+                result.clear()
+                listener.onSeminarsUserIds(result)
+                Log.w("Firestore", "Error getting documents $exception")
+            }
         //END-CODE-UOC-3.1
     }
 
@@ -109,8 +123,37 @@ class DataSourceFirebase :  DataSource {
         listener.onSeminarsUserIds = { list_ids ->
             if (!list_ids.isEmpty()){
                 //BEGIN-CODE-UOC-3.2
-
-
+                val db = FirebaseFirestore.getInstance()
+                db.collection("seminary")
+                    .whereIn("sem_id", list_ids)
+                    .orderBy("sem_id")
+                    .get(Source.SERVER)
+                    .addOnSuccessListener { querySnapshot ->
+                        userSeminaryList.clear()
+                        if (!querySnapshot.isEmpty()) {
+                            for (doc in querySnapshot.documents) {
+                                val sem_id = doc.data?.get("sem_id") as Int
+                                val sem_name = doc.data?.get("sem_name") as String
+                                val sem_duration = doc.data?.get("sem_duration") as Int
+                                val sem_level = doc.data?.get("sem_level") as String
+                                val sem_image_url = doc.data?.get("sem_image_url") as String
+                                var seminar = Seminary(
+                                    sem_id,
+                                    sem_name,
+                                    sem_duration,
+                                    sem_level,
+                                    sem_image_url
+                                )
+                                userSeminaryList.add(seminar)
+                            }
+                        }
+                        listener.onSeminarsUser()
+                    }
+                    .addOnFailureListener { exception ->
+                        userSeminaryList.clear()
+                        listener.onSeminarsUser()
+                        Log.w("Firestore", "Error getting documents $exception")
+                    }
                 //END-CODE-UOC-3.2
             }
         }
