@@ -94,14 +94,14 @@ class DataSourceFirebase :  DataSource {
         val result = mutableListOf<Long>()
         //BEGIN-CODE-UOC-3.1
         val db = FirebaseFirestore.getInstance()
-        db.collection("user_seminary")
-            .whereEqualTo("user_id", _user_id)
+        db.collection("user_seminar")
+            .whereEqualTo("usersem_user_id", _user_id)
             .get(Source.SERVER)
             .addOnSuccessListener { querySnapshot ->
                 result.clear()
                 if(!querySnapshot.isEmpty()){
                     for(doc in querySnapshot.documents){
-                        val seminar_id = doc.data?.get("sem_id") as Long
+                        val seminar_id = doc.data?.get("usersem_seminar_id") as Long
                         result.add(seminar_id)
                     }
                 }
@@ -124,7 +124,7 @@ class DataSourceFirebase :  DataSource {
             if (!list_ids.isEmpty()){
                 //BEGIN-CODE-UOC-3.2
                 val db = FirebaseFirestore.getInstance()
-                db.collection("seminary")
+                db.collection("seminar")
                     .whereIn("sem_id", list_ids)
                     .orderBy("sem_id")
                     .get(Source.SERVER)
@@ -132,9 +132,9 @@ class DataSourceFirebase :  DataSource {
                         userSeminaryList.clear()
                         if (!querySnapshot.isEmpty()) {
                             for (doc in querySnapshot.documents) {
-                                val sem_id = doc.data?.get("sem_id") as Int
+                                val sem_id = (doc.data?.get("sem_id") as Long).toInt()
                                 val sem_name = doc.data?.get("sem_name") as String
-                                val sem_duration = doc.data?.get("sem_duration") as Int
+                                val sem_duration = (doc.data?.get("sem_duration") as Long).toInt()
                                 val sem_level = doc.data?.get("sem_level") as String
                                 val sem_image_url = doc.data?.get("sem_image_url") as String
                                 var seminar = Seminary(
@@ -147,6 +147,7 @@ class DataSourceFirebase :  DataSource {
                                 userSeminaryList.add(seminar)
                             }
                         }
+                        seminarsLiveData.postValue(userSeminaryList) //refreshes the received data.
                         listener.onSeminarsUser()
                     }
                     .addOnFailureListener { exception ->
