@@ -172,7 +172,45 @@ class DataSourceFirebase :  DataSource {
 
 
         //BEGIN-CODE-UOC-4.3
+        val db = FirebaseFirestore.getInstance()
+        db.collection("item")
+            .whereEqualTo("item_sem_id", id)
+            .orderBy("item_id")
+            .get(Source.SERVER)
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    for (doc in querySnapshot.documents) {
+                        val item_id = (doc.data?.get("item_id") as Long).toInt()
+                        val item_type = ItemType.fromInt((doc.data?.get("item_type") as Long).toInt())
+                        val item_question = doc.data?.get("item_question") as String
+                        val item_link = doc.data?.get("item_link") as String
+                        val item_correct_answer = doc.data?.get("item_correct_answer") as Long
+                        val item_answer1 = doc.data?.get("item_answer1") as String
+                        val item_answer2 = doc.data?.get("item_answer2") as String
+                        val item_answer3 = doc.data?.get("item_answer3") as String
+                        val item_answer4 = doc.data?.get("item_answer4") as String
 
+                        var item = Item(
+                            item_type,
+                            item_id,
+                            item_question,
+                            item_link,
+                            item_correct_answer,
+                            item_answer1,
+                            item_answer2,
+                            item_answer3,
+                            item_answer4
+                        )
+                        seminarItemList.add(item)
+                    }
+                }
+                ItemsLiveData.postValue(seminarItemList) //refreshes the received data.
+                listener.onItemsSeminar()
+            }
+            .addOnFailureListener { exception ->
+                listener.onItemsSeminar()
+                Log.w("Firestore", "Error getting documents $exception")
+            }
 
 
 

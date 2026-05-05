@@ -7,7 +7,13 @@ import androidx.annotation.DrawableRes
 enum class ItemType(val v1:Int) {
     BASIC(1),
     REGULAR(2),
-    ADVANCED(3),
+    ADVANCED(3);
+    companion object {
+        // This function finds the enum that matches the integer value
+        fun fromInt(value: Int): ItemType {
+            return ItemType.entries.find { it.v1 == value } ?: BASIC // Returns BASIC as default if not found
+        }
+    }
 }
 
 
