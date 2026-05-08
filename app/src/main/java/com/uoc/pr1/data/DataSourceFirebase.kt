@@ -204,7 +204,7 @@ class DataSourceFirebase :  DataSource {
                         seminarItemList.add(item)
                     }
                 }
-             //   ItemsLiveData.postValue(seminarItemList) //refreshes the received data.
+                ItemsLiveData.postValue(seminarItemList) //refreshes the received data.
                 listener.onItemsSeminar()
             }
             .addOnFailureListener { exception ->
@@ -260,14 +260,26 @@ class DataSourceFirebase :  DataSource {
     {
 
         //BEGIN-CODE-UOC_5.1
-
-
+        var sem_id = 0
+        val db = FirebaseFirestore.getInstance()
+        db.collection("seminar")
+            .orderBy("sem_id",Query.Direction.DESCENDING)
+            .limit(1)
+            .get(Source.SERVER)
+            .addOnSuccessListener { querySnapshot ->
+                userSeminaryList.clear()
+                if (!querySnapshot.isEmpty()) {
+                    //it needs only the first and only id
+                    sem_id = (querySnapshot.documents[0].data?.get("sem_id") as Long).toInt()
+                }
+                listener.onNewSeminarId(sem_id+1)
+            }
+            .addOnFailureListener { exception ->
+                listener.onNewSeminarId(sem_id) //returns 0
+                Log.w("Firestore", "Error getting documents $exception")
+            }
 
         //END-CODE-UOC_5.1
-
-
-
-
     }
 
     override fun addSeminarAsync(title:String, url:String, sem_duration: Int, sem_level:String, listener:ListenerData) {
@@ -283,8 +295,32 @@ class DataSourceFirebase :  DataSource {
             )
 
         //BEGIN-CODE-UOC-5.2
+            val db = FirebaseFirestore.getInstance()
+            db.collection("seminar")
+                .add(hashMap)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "seminar added! Now adding user_seminar")
+                    val hashMap2 = hashMapOf<String, Any>(
+                        "usersem_user_id" to _user_id,
+                        "usersem_seminar_id" to new_id)
+                    db.collection("user_seminar")
+                        .add(hashMap2)
+                        .addOnSuccessListener {
+                            val newSeminar = Seminary(
+                                new_id,
+                                title,
+                                sem_duration,
+                                sem_level,
+                                url
+                            )
+                            ReloadViewModelSeminar(newSeminar)
+                            listener.onSeminarsUser
+                            Log.d("Firestore", "user_seminar added!")
+                        }
+                        .addOnFailureListener { e -> Log.w("Firestore", "Error writing new user_seminar", e) }
 
-
+                }
+                .addOnFailureListener { e -> Log.w("Firestore", "Error writing new semiar", e) }
 
 
         //BEGIN-CODE-UOC-5.2
@@ -323,47 +359,5 @@ class DataSourceFirebase :  DataSource {
 
 
     }
-
-/* Just to create automatically item documents.
-    override fun insertItemsToFirestore() {
-        val db = FirebaseFirestore.getInstance()
-        val itemsCollection = db.collection("item")
-
-        val items = listOf(
-            com.uoc.pr1.data.temp.Item(1, 2, 1, "A wireless device is one that can communicate...", "", 2,
-                "via fiber optic cable", "via a wireless network", "via ethernet cables", "None of the above is correct"
-            ),
-            com.uoc.pr1.data.temp.Item(1, 3, 1, "Which category of device is not considered mobile?",
-                "https://mobile-app-dev-uoc.github.io", 4,
-                "smartphone", "tablet", "wearable device", "laptop computer"
-            ),
-            com.uoc.pr1.data.temp.Item(2, 4, 1, "Which operating system does Samsung use for some of its wearable devices?",
-                "https://mobile-app-dev-uoc.github.io", 3,
-                "MacOS", "Windows", "Tizen", "Linux"
-            ),
-            com.uoc.pr1.data.temp.Item(2, 5, 1, "What is the latest available version of the Android operating system?",
-                "", 2, "10", "16", "13", "15"
-            ),
-            com.uoc.pr1.data.temp.Item(2, 6, 1, "A web application is...",
-                "", 1,
-                "a website specifically optimized for a mobile device",
-                "an application installed on a mobile device with access to hardware",
-                "Not used for anything in communications",
-                "The transmission of data via Ethernet"
-            )
-        )
-
-        for (item in items) {
-            itemsCollection
-                .add(item)
-                .addOnSuccessListener {
-                    println("Item ${item.item_id} insertado correctamente")
-                }
-                .addOnFailureListener { e ->
-                    println("Error insertando item ${item.item_id}: ${e.message}")
-                }
-        }
-    }
-*/
 
 }

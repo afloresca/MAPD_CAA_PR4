@@ -207,9 +207,11 @@ class QuizFragment : Fragment() {
         // v2.setImageBitmap(bm)
 
         //BEGIN-CODE-UOC-3.4
-        SeminarsAdapter.ItemViewHolder(v2,{}).bind(item!!)
-
-
+        item?.let {
+            Glide.with(this)
+                .load(it.image_path)
+                .into(v2)
+        }
 
         //BEGIN-CODE-UOC-3.4
 
