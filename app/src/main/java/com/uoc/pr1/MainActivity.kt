@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnFragmentLoginInteracti
         super.onCreate(savedInstanceState)
         dataSource = DataSource.getDataSource(DataSource.DataSourceFactory.Default,this)
 
-
     //    dataSource.selectItemsSeminary(0)
 
         binding = ActivityMainBinding.inflate(layoutInflater)

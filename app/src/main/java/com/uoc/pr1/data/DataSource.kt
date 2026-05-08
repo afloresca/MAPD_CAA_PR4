@@ -41,7 +41,7 @@ open class  DataSource {
     open fun selectSeminarsUserAsync(user_id:Int, listener:ListenerData) {}
     open fun selectItemsSeminary(id:Int,listener:ListenerData){}
     open fun addItemAsync(title:String, description:String, uri: Uri?,listener:ListenerData) {}
-
+    open fun insertItemsToFirestore() {}
 
     // *******************
     open fun addSeminarAsync(title:String, url:String, sem_duration: Int, sem_level:String, listener:ListenerData) {}
