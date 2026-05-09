@@ -100,7 +100,7 @@ class DataSourceFirebase :  DataSource {
             .addOnSuccessListener { querySnapshot ->
                 result.clear()
                 if(!querySnapshot.isEmpty()){
-                    for(doc in querySnapshot.documents){
+                    querySnapshot.forEach { doc ->
                         val seminar_id = doc.data?.get("usersem_seminar_id") as Long
                         result.add(seminar_id)
                     }
@@ -131,7 +131,7 @@ class DataSourceFirebase :  DataSource {
                     .addOnSuccessListener { querySnapshot ->
                         userSeminaryList.clear()
                         if (!querySnapshot.isEmpty()) {
-                            for (doc in querySnapshot.documents) {
+                            querySnapshot.forEach { doc ->
                                 val sem_id = (doc.data?.get("sem_id") as Long).toInt()
                                 val sem_name = doc.data?.get("sem_name") as String
                                 val sem_duration = (doc.data?.get("sem_duration") as Long).toInt()
@@ -179,16 +179,16 @@ class DataSourceFirebase :  DataSource {
             .get(Source.SERVER)
             .addOnSuccessListener { querySnapshot ->
                 if (!querySnapshot.isEmpty) {
-                    for (doc in querySnapshot.documents) {
-                        val item_id = (doc.data?.get("item_id") as Long).toInt()
-                        val item_type = ItemType.fromInt((doc.data?.get("item_type") as Long).toInt())
-                        val item_question = doc.data?.get("item_question") as String
-                        val item_link = doc.data?.get("item_link") as String
-                        val item_correct_answer = doc.data?.get("item_correct_answer") as Long
-                        val item_answer1 = doc.data?.get("item_answer1") as String
-                        val item_answer2 = doc.data?.get("item_answer2") as String
-                        val item_answer3 = doc.data?.get("item_answer3") as String
-                        val item_answer4 = doc.data?.get("item_answer4") as String
+                    querySnapshot.forEach { doc ->
+                        val item_id = (doc.data["item_id"] as Long).toInt()
+                        val item_type = ItemType.fromInt((doc.data["item_type"] as Long).toInt())
+                        val item_question = doc.data["item_question"] as String
+                        val item_link = doc.data.get("item_link") as String
+                        val item_correct_answer = doc.data["item_correct_answer"] as Long
+                        val item_answer1 = doc.data["item_answer1"] as String
+                        val item_answer2 = doc.data["item_answer2"] as String
+                        val item_answer3 = doc.data["item_answer3"] as String
+                        val item_answer4 = doc.data["item_answer4"] as String
 
                         var item = Item(
                             item_type,
@@ -267,7 +267,6 @@ class DataSourceFirebase :  DataSource {
             .limit(1)
             .get(Source.SERVER)
             .addOnSuccessListener { querySnapshot ->
-                userSeminaryList.clear()
                 if (!querySnapshot.isEmpty()) {
                     //it needs only the first and only id
                     sem_id = (querySnapshot.documents[0].data?.get("sem_id") as Long).toInt()
@@ -314,7 +313,7 @@ class DataSourceFirebase :  DataSource {
                                 url
                             )
                             ReloadViewModelSeminar(newSeminar)
-                            listener.onSeminarsUser
+                            listener.onSeminarsUser()
                             Log.d("Firestore", "user_seminar added!")
                         }
                         .addOnFailureListener { e -> Log.w("Firestore", "Error writing new user_seminar", e) }

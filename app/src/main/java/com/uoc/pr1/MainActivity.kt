@@ -123,9 +123,11 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnFragmentLoginInteracti
 
             show()
         }
-
-
-
+        //BEGIN-UOC-6.1
+        if (correct == count){
+            animate()
+        }
+        //END-UOC-6.2
     }
 
 
@@ -234,5 +236,34 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnFragmentLoginInteracti
 
     }
 
-
+    //BEGIN-UOC-6.1
+    public fun animate(){
+        val animatedImageView: ImageView = findViewById(R.id.animatedImageView)
+        val screenWidth = resources.displayMetrics.widthPixels
+        val layoutParams = animatedImageView.layoutParams
+        layoutParams.width = screenWidth
+        layoutParams.height = screenWidth
+        animatedImageView.layoutParams = layoutParams
+        val screenHeight = resources.displayMetrics.heightPixels
+        val translationY = ObjectAnimator.ofFloat(animatedImageView,
+            "translationY",
+            screenHeight.toFloat(),
+            -(screenHeight + 300).toFloat()
+        )
+        translationY.setDuration(3000)
+        translationY.addListener(
+            object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {
+                    animatedImageView.visibility = View.VISIBLE
+                }
+                override fun onAnimationEnd(animation: Animator) {
+                    animatedImageView.visibility = View.INVISIBLE
+                }
+                override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationRepeat(animation: Animator) {}
+            }
+        )
+        translationY.start()
+    }
+    //END-UOC-6.1
 }

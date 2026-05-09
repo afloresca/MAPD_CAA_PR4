@@ -16,5 +16,17 @@
 
 
     </LinearLayout>
+    <ImageView
+        android:id="@+id/animatedImageView"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/anim_wow"
+        android:layout_marginBottom="-100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="invisible"
+        android:elevation="10dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

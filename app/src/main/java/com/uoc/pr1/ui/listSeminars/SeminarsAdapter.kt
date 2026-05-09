@@ -62,11 +62,9 @@ class SeminarsAdapter(private val onClick: (Seminary) -> Unit) :
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap,
                                                  transition: Transition<in Bitmap>?) {
-                    // Handle the bitmap (e.g., set it to an ImageView)
                         itemImageView!!.setImageBitmap(resource)
                     }
                     override fun onLoadCleared(placeholder: Drawable?) {
-                    // Remove references to the Bitmap, if necessary
                     }
                 })
             //END-CODE-UOC-3.3
